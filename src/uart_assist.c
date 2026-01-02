@@ -6,7 +6,8 @@ the terms of the GNU Lesser General Public License version 3 as published by the
 Free Software Foundation.
 */
 
-#include "uart_test.h"
+#include "uart_assist.h"
+#include "json_config.h"
 #include "mydebug.h"
 #include <ctype.h>
 #include <errno.h>
@@ -52,12 +53,13 @@ int parse_hex_string(const char *hex_str, char *buf, int buf_len)
 		c2 = tolower(c2);
 
 		if (!((c1 >= '0' && c1 <= '9') || (c1 >= 'a' && c1 <= 'f'))) {
-			pr_error("Invalid hex character at position %d: %c\n", i, c1);
+			pr_error("Invalid hex character at position %d: %c\n",
+			         i, c1);
 			return -1;
 		}
 		if (!((c2 >= '0' && c2 <= '9') || (c2 >= 'a' && c2 <= 'f'))) {
-			pr_error("Invalid hex character at position %d: %c\n", i + 1,
-			         c2);
+			pr_error("Invalid hex character at position %d: %c\n",
+			         i + 1, c2);
 			return -1;
 		}
 
@@ -170,7 +172,8 @@ int uart_recv_with_timeout(uartdev_t *dev, char *buf, int len, int timeout_sec)
 	if (pfd.revents & POLLIN) {
 		nread = uartdev_recv(dev, buf, len);
 		if (nread < 0) {
-			pr_error("uartdev_recv() failed: %s\n", strerror(errno));
+			pr_error("uartdev_recv() failed: %s\n",
+			         strerror(errno));
 			return -1;
 		}
 	}
@@ -195,13 +198,14 @@ int uart_loopback_test(uartdev_t *dev, const char *send_str,
 
 	if (format == OUTPUT_HEX) {
 		/* 解析hex字符串 */
-		send_data_len = parse_hex_string(send_str, send_buf, sizeof(send_buf));
+		send_data_len =
+		    parse_hex_string(send_str, send_buf, sizeof(send_buf));
 		if (send_data_len < 0) {
 			return -1;
 		}
 		send_data = send_buf;
-		pr_info("Loopback test: sending hex \"%s\" (%d bytes)\n", send_str,
-		        send_data_len);
+		pr_info("Loopback test: sending hex \"%s\" (%d bytes)\n",
+		        send_str, send_data_len);
 	} else {
 		/* ASCII格式 */
 		send_data_len = strlen(send_str);
@@ -233,7 +237,8 @@ int uart_loopback_test(uartdev_t *dev, const char *send_str,
 		pr_error("Failed to receive data: %s\n", strerror(errno));
 		return -1;
 	} else if (recv_len == 0) {
-		pr_error("Receive timeout after %d seconds\n", RECV_TIMEOUT_SEC);
+		pr_error("Receive timeout after %d seconds\n",
+		         RECV_TIMEOUT_SEC);
 		return -1;
 	}
 
@@ -242,8 +247,9 @@ int uart_loopback_test(uartdev_t *dev, const char *send_str,
 
 	/* 比较发送和接收的数据 */
 	if (recv_len != send_data_len) {
-		pr_error("Data length mismatch: sent %d bytes, received %d bytes\n",
-		         send_data_len, recv_len);
+		pr_error(
+		    "Data length mismatch: sent %d bytes, received %d bytes\n",
+		    send_data_len, recv_len);
 		if (format == OUTPUT_HEX) {
 			pr_info("Sent (hex): \"%s\"\n", send_str);
 		} else {
@@ -285,16 +291,19 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 
 	if (format == OUTPUT_HEX) {
 		/* 解析hex字符串 */
-		send_data_len = parse_hex_string(send_str, send_buf, sizeof(send_buf));
+		send_data_len =
+		    parse_hex_string(send_str, send_buf, sizeof(send_buf));
 		if (send_data_len < 0) {
 			return -1;
 		}
 		send_data = send_buf;
 		if (count == 0) {
-			pr_info("Send test: hex=\"%s\" (%d bytes), interval=%d ms, count=infinite\n",
+			pr_info("Send test: hex=\"%s\" (%d bytes), interval=%d "
+			        "ms, count=infinite\n",
 			        send_str, send_data_len, interval_ms);
 		} else {
-			pr_info("Send test: hex=\"%s\" (%d bytes), interval=%d ms, count=%d\n",
+			pr_info("Send test: hex=\"%s\" (%d bytes), interval=%d "
+			        "ms, count=%d\n",
 			        send_str, send_data_len, interval_ms, count);
 		}
 	} else {
@@ -306,10 +315,12 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 		}
 		send_data = send_str;
 		if (count == 0) {
-			pr_info("Send test: string=\"%s\" (%d bytes), interval=%d ms, count=infinite\n",
+			pr_info("Send test: string=\"%s\" (%d bytes), "
+			        "interval=%d ms, count=infinite\n",
 			        send_str, send_data_len, interval_ms);
 		} else {
-			pr_info("Send test: string=\"%s\" (%d bytes), interval=%d ms, count=%d\n",
+			pr_info("Send test: string=\"%s\" (%d bytes), "
+			        "interval=%d ms, count=%d\n",
 			        send_str, send_data_len, interval_ms, count);
 		}
 	}
@@ -319,7 +330,8 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 
 	while (g_running) {
 		/* 发送数据 */
-		if (uartdev_send(dev, send_data, send_data_len) != send_data_len) {
+		if (uartdev_send(dev, send_data, send_data_len) !=
+		    send_data_len) {
 			pr_error("Failed to send data: %s\n", strerror(errno));
 			return -1;
 		}
@@ -328,11 +340,13 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 		i++;
 
 		if (format == OUTPUT_HEX) {
-			printf("Send [%d] : hex=\"%s\" (%d bytes, total: %d bytes)\n", i,
-			       send_str, send_data_len, sent_bytes);
+			printf("Send [%d] : hex=\"%s\" (%d bytes, total: %d "
+			       "bytes)\n",
+			       i, send_str, send_data_len, sent_bytes);
 		} else {
-			printf("Send [%d] : \"%s\" (%d bytes, total: %d bytes)\n", i,
-			       send_str, send_data_len, sent_bytes);
+			printf(
+			    "Send [%d] : \"%s\" (%d bytes, total: %d bytes)\n",
+			    i, send_str, send_data_len, sent_bytes);
 		}
 
 		/* 检查发送次数 */
@@ -369,11 +383,11 @@ int uart_recv_test(uartdev_t *dev, output_format_t format)
 
 	while (g_running) {
 		/* 接收数据（带超时） */
-		recv_len = uart_recv_with_timeout(dev, recv_buf,
-		                                  sizeof(recv_buf) - 1,
-		                                  RECV_TIMEOUT_SEC);
+		recv_len = uart_recv_with_timeout(
+		    dev, recv_buf, sizeof(recv_buf) - 1, RECV_TIMEOUT_SEC);
 		if (recv_len < 0) {
-			pr_error("Failed to receive data: %s\n", strerror(errno));
+			pr_error("Failed to receive data: %s\n",
+			         strerror(errno));
 			return -1;
 		} else if (recv_len == 0) {
 			/* 超时或被信号中断，检查是否需要退出 */
@@ -382,7 +396,8 @@ int uart_recv_test(uartdev_t *dev, output_format_t format)
 				break;
 			}
 			/* 超时，继续等待 */
-			pr_info("Receive timeout (%d seconds), waiting for data...\n",
+			pr_info("Receive timeout (%d seconds), waiting for "
+			        "data...\n",
 			        RECV_TIMEOUT_SEC);
 			continue;
 		}
@@ -410,3 +425,91 @@ int uart_recv_test(uartdev_t *dev, output_format_t format)
 	return 0;
 }
 
+int uart_file_test(uartdev_t *dev, const char *json_file)
+{
+	json_config_t *config = NULL;
+	int cycle, i;
+	char send_buf[512];
+	int send_len;
+	int total_bytes = 0;
+	int sent_count = 0;
+
+	if (dev == NULL || json_file == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	/* 解析JSON文件 */
+	config = parse_json_file(json_file);
+	if (config == NULL) {
+		pr_error("Failed to parse JSON file: %s\n", json_file);
+		return -1;
+	}
+
+	/* 验证配置 */
+	if (validate_json_config(config) < 0) {
+		pr_error("Invalid JSON configuration\n");
+		free_json_config(config);
+		return -1;
+	}
+
+	pr_info("Group: %s\n", config->group_name);
+	pr_info("CycleCount: %d\n", config->cycle_count);
+
+	/* 清空缓冲区 */
+	uartdev_flush(dev);
+
+	/* 执行发送循环 */
+	for (cycle = 1; cycle <= config->cycle_count && g_running; cycle++) {
+		pr_info("Cycle: %d/%d\n", cycle, config->cycle_count);
+
+		/* 遍历发送列表 */
+		for (i = 0; i < config->send_list_count && g_running; i++) {
+			/* 检查是否启用 */
+			if (config->send_list[i].enable == 0) {
+				continue;
+			}
+
+			/* 解析HEX数据 */
+			send_len =
+			    parse_hex_string(config->send_list[i].hex_data,
+			                     send_buf, sizeof(send_buf));
+			if (send_len < 0) {
+				pr_error(
+				    "Failed to parse HexData for item %d\n",
+				    config->send_list[i].number);
+				continue;
+			}
+
+			/* 发送数据 */
+			if (uartdev_send(dev, send_buf, send_len) != send_len) {
+				pr_error("Failed to send data: %s\n",
+				         strerror(errno));
+				continue;
+			}
+
+			total_bytes += send_len;
+			sent_count++;
+
+			/* 打印发送信息 */
+			printf("Send [%d] : hex=\"%s\" (%d bytes, total: %d "
+			       "bytes)\n",
+			       config->send_list[i].number,
+			       config->send_list[i].hex_data, send_len,
+			       total_bytes);
+
+			/* 延时 */
+			if (config->send_list[i].delay > 0) {
+				usleep(config->send_list[i].delay * 1000);
+			}
+		}
+	}
+
+	pr_info("Send completed: sent %d items, total %d bytes\n", sent_count,
+	        total_bytes);
+
+	/* 清理资源 */
+	free_json_config(config);
+
+	return 0;
+}

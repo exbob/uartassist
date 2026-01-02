@@ -1,0 +1,18 @@
+{
+  "GroupName": "TestConfig",
+  "CycleCount": 5,
+  "SendList": [
+    {
+      "Number": 1,
+      "HexData": "756172745f6173736973740a",
+      "Delay": 50,
+      "Enable": 1
+    },
+    {
+      "Number": 2,
+      "HexData": "313233343536373839300a",
+      "Delay": 1000,
+      "Enable": 1
+    }
+  ]
+}

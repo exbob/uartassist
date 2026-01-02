@@ -9,6 +9,7 @@ Free Software Foundation.
 #ifndef __UARTDEV_H__
 #define __UARTDEV_H__
 
+#include "mydebug.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
@@ -18,7 +19,6 @@ Free Software Foundation.
 #include <sys/file.h>
 #include <termios.h>
 #include <unistd.h>
-#include "mydebug.h"
 
 #define UARTDEV_INVALID_FD -1
 
@@ -127,8 +127,8 @@ arguments : const char *port , UART device file name ,"/dev/ttyS1",
           int data_bit , data bit , 5, 6, 7, 8
           int stop_bit , stop bit , 1 or 2
 */
-static inline uartdev_t *uartdev_new(const char *port, int baud, int data_bit,
-                                     char parity, int stop_bit)
+static inline uartdev_t *uartdev_new(const char *port, int baud, int data_bit, char parity,
+                                     int stop_bit)
 {
 	pr_debug("%s, %d, %d%c%d\n", port, baud, data_bit, parity, stop_bit);
 
@@ -210,8 +210,8 @@ static inline uartdev_t *uartdev_new(const char *port, int baud, int data_bit,
 	/* fd init */
 	dev->fd = UARTDEV_INVALID_FD;
 
-	pr_debug("new uartdev_t, %s, %d, %d%c%d\n", dev->port, dev->baud,
-	         dev->data_bit, dev->parity, dev->stop_bit);
+	pr_debug("new uartdev_t, %s, %d, %d%c%d\n", dev->port, dev->baud, dev->data_bit,
+	         dev->parity, dev->stop_bit);
 
 	return dev;
 }

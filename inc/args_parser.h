@@ -14,7 +14,8 @@ Free Software Foundation.
 typedef enum {
 	MODE_LOOPBACK, /* 自测模式 */
 	MODE_SEND,     /* 发送模式 */
-	MODE_RECV      /* 接收模式 */
+	MODE_RECV,     /* 接收模式 */
+	MODE_FILE      /* 文件模式 */
 } test_mode_t;
 
 typedef enum {
@@ -23,16 +24,17 @@ typedef enum {
 } output_format_t;
 
 typedef struct {
-	char *device;              /* 串口设备名 */
-	int baud;                  /* 波特率 */
-	int data_bit;              /* 数据位 */
-	char parity;               /* 校验位 */
-	int stop_bit;              /* 停止位 */
-	test_mode_t mode;          /* 工作模式 */
-	char *send_string;         /* 发送字符串 */
-	int send_interval;         /* 发送间隔（毫秒） */
-	int send_count;            /* 发送次数（0=无限） */
-	output_format_t format;    /* 接收打印格式 */
+	char *device;           /* 串口设备名 */
+	int baud;               /* 波特率 */
+	int data_bit;           /* 数据位 */
+	char parity;            /* 校验位 */
+	int stop_bit;           /* 停止位 */
+	test_mode_t mode;       /* 工作模式 */
+	char *send_string;      /* 发送字符串 */
+	int send_interval;      /* 发送间隔（毫秒） */
+	int send_count;         /* 发送次数（0=无限） */
+	output_format_t format; /* 接收打印格式 */
+	char *json_file;        /* JSON配置文件（file模式） */
 } uart_config_t;
 
 /*
@@ -51,8 +53,7 @@ int parse_args(int argc, char *argv[], uart_config_t *config);
  *       stop_bit - 输出停止位
  * 返回: 0 成功, -1 失败
  */
-int parse_uart_config(const char *str, int *data_bit, char *parity,
-                      int *stop_bit);
+int parse_uart_config(const char *str, int *data_bit, char *parity, int *stop_bit);
 
 /*
  * 打印使用说明
@@ -65,4 +66,3 @@ void print_usage(const char *program_name);
 void free_config(uart_config_t *config);
 
 #endif /* __ARGS_PARSER_H__ */
-

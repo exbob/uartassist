@@ -34,14 +34,20 @@ endif()
 set(SOURCES_DIR src)
 set(HEADERS_DIR inc)
 
-# 收集源文件
-file(GLOB_RECURSE SOURCES "${SOURCES_DIR}/*.c")
+# uart_assist 源文件
+set(UART_ASSIST_SOURCES
+    ${SOURCES_DIR}/main.c
+    ${SOURCES_DIR}/args_parser.c
+    ${SOURCES_DIR}/uart_assist.c
+    ${SOURCES_DIR}/json_config.c
+    third_party/cjson/cJSON.c
+)
 
 # 设置程序名
-set(program uart_test)
+set(program uart_assist)
 
 # 创建可执行文件
-add_executable(${program} ${SOURCES})
+add_executable(${program} ${UART_ASSIST_SOURCES})
 
 # 设置配置文件
 configure_file(Config.h.in Config.h)
@@ -50,6 +56,7 @@ configure_file(Config.h.in Config.h)
 target_include_directories(${program} PUBLIC 
     "${PROJECT_BINARY_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/${HEADERS_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/cjson"
 )
 
 # 所有编译模式都使用 -Wall 选项

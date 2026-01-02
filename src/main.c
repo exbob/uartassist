@@ -7,9 +7,9 @@ Free Software Foundation.
 */
 
 #include "args_parser.h"
-#include "uart_test.h"
-#include "uartdev.h"
 #include "mydebug.h"
+#include "uart_assist.h"
+#include "uartdev.h"
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
 	}
 
 	/* 创建串口设备 */
-	dev = uartdev_new(config.device, config.baud, config.data_bit,
-	                  config.parity, config.stop_bit);
+	dev = uartdev_new(config.device, config.baud, config.data_bit, config.parity,
+	                  config.stop_bit);
 	if (dev == NULL) {
 		pr_error("Failed to create uart device: %s\n", strerror(errno));
 		free_config(&config);
@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	pr_info("UART device opened: %s, %d, %d%c%d\n", config.device,
-	        config.baud, config.data_bit, config.parity, config.stop_bit);
+	pr_info("UART device opened: %s, %d, %d%c%d\n", config.device, config.baud, config.data_bit,
+	        config.parity, config.stop_bit);
 
 	/* 根据模式执行测试 */
 	switch (config.mode) {
@@ -82,6 +82,10 @@ int main(int argc, char *argv[])
 
 	case MODE_RECV:
 		ret = uart_recv_test(dev, config.format);
+		break;
+
+	case MODE_FILE:
+		ret = uart_file_test(dev, config.json_file);
 		break;
 
 	default:
@@ -100,4 +104,3 @@ int main(int argc, char *argv[])
 
 	return EXIT_SUCCESS;
 }
-

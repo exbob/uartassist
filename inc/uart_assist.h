@@ -6,8 +6,8 @@ the terms of the GNU Lesser General Public License version 3 as published by the
 Free Software Foundation.
 */
 
-#ifndef __UART_TEST_H__
-#define __UART_TEST_H__
+#ifndef __UART_ASSIST_H__
+#define __UART_ASSIST_H__
 
 #include "args_parser.h"
 #include "uartdev.h"
@@ -30,8 +30,7 @@ int parse_hex_string(const char *hex_str, char *buf, int buf_len);
  *       format - 发送格式（ASCII/HEX）
  * 返回: 0 成功, -1 失败
  */
-int uart_loopback_test(uartdev_t *dev, const char *send_str,
-                       output_format_t format);
+int uart_loopback_test(uartdev_t *dev, const char *send_str, output_format_t format);
 
 /*
  * 发送模式：按间隔和次数发送数据
@@ -42,8 +41,8 @@ int uart_loopback_test(uartdev_t *dev, const char *send_str,
  *       format - 发送格式（ASCII/HEX）
  * 返回: 0 成功, -1 失败
  */
-int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
-                   int count, output_format_t format);
+int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms, int count,
+                   output_format_t format);
 
 /*
  * 接收模式：持续接收并打印数据
@@ -54,6 +53,14 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 int uart_recv_test(uartdev_t *dev, output_format_t format);
 
 /*
+ * 文件模式：根据JSON配置文件发送数据
+ * 参数: dev - 串口设备
+ *       json_file - JSON配置文件路径
+ * 返回: 0 成功, -1 失败
+ */
+int uart_file_test(uartdev_t *dev, const char *json_file);
+
+/*
  * 带超时的接收数据
  * 参数: dev - 串口设备
  *       buf - 接收缓冲区
@@ -61,8 +68,7 @@ int uart_recv_test(uartdev_t *dev, output_format_t format);
  *       timeout_sec - 超时时间（秒）
  * 返回: 接收的字节数，超时返回0，错误返回-1
  */
-int uart_recv_with_timeout(uartdev_t *dev, char *buf, int len,
-                           int timeout_sec);
+int uart_recv_with_timeout(uartdev_t *dev, char *buf, int len, int timeout_sec);
 
 /*
  * 打印时间戳
@@ -79,5 +85,4 @@ void print_ascii(const char *buf, int len);
  */
 void print_hex(const char *buf, int len);
 
-#endif /* __UART_TEST_H__ */
-
+#endif /* __UART_ASSIST_H__ */
