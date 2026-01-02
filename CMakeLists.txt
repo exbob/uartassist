@@ -8,16 +8,20 @@ project(uartools VERSION 1.0)
 string(TIMESTAMP BUILD_TIME "%Y.%m.%d %H:%M" UTC)
 message(STATUS "Build Time: " ${BUILD_TIME})
 
+# 初始化完整版本号为基础版本号
+set(FULL_VERSION "${PROJECT_VERSION}")
+
 # 如果存在 git ，就执行获取 git 提交版本
 find_package(Git)
 if(Git_FOUND)
     message(STATUS "Git found: ${GIT_EXECUTABLE}")
-    # 获取最新的 git commit hash，存储在 GIT_HASH 变量
+    # 获取最新的 git commit hash（短格式，7位），存储在 GIT_HASH 变量
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} log -1 --format=%H
+        COMMAND ${GIT_EXECUTABLE} rev-parse --short=7 HEAD
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
         OUTPUT_VARIABLE GIT_HASH
         OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
     )
     
     # 获取最新的 commit 日期，YYYY-MM-DD，存储在 GIT_DATA 变量
@@ -25,8 +29,19 @@ if(Git_FOUND)
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE  GIT_DATE
         OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
     )
-    message(STATUS "Git Commit ${GIT_HASH}, Date ${GIT_DATE}")
+    
+    # 如果成功获取到 git hash，则更新版本号为 VERSION-g[commit_id] 格式
+    if(NOT "${GIT_HASH}" STREQUAL "")
+        set(FULL_VERSION "${PROJECT_VERSION}-g${GIT_HASH}")
+        message(STATUS "Git Commit ${GIT_HASH}, Date ${GIT_DATE}")
+        message(STATUS "Version: ${FULL_VERSION}")
+    else()
+        message(STATUS "Git Commit not found, using base version")
+    endif()
+else()
+    message(STATUS "Git not found, using base version")
 endif()
 
 
