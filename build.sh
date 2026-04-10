@@ -1,44 +1,68 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -euo pipefail
 
-BUILD_DIR="./build"
-RELEASE_DIR="."
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BUILD_DIR="${ROOT_DIR}/build"
+DEPLOY_DIR="${ROOT_DIR}/deploy"
 
-# 设置架构，默认为 x86
-ARCH=${ARCH:-x86}
+ARCH="${ARCH:-x86}"
+TOOLCHAIN_FILE=""
 
-# 根据 ARCH 设置编译器
-case ${ARCH} in
-	x86|X86)
-		CC="gcc"
-		CXX="g++"
-		echo "Building for x86 (using gcc)"
+MODE="${1:-release}"
+BUILD_TYPE="Release"
+
+help()
+{
+	echo "Usage: [ARCH=aarch64|arm64|x86_64|x86] ./build.sh [MODE]"
+	echo "MODE: release|debug|clean|help"
+	echo "Example: ./build.sh"
+	echo "Example: ./build.sh debug"
+	echo "Example: ARCH=arm64 ./build.sh"
+}
+
+case "${ARCH}" in
+	aarch64|arm64|ARM64)
+		TOOLCHAIN_FILE="${ROOT_DIR}/cmake/toolchain-aarch64.cmake"
 		;;
-	ARM64|arm64|aarch64)
-		CC="aarch64-linux-gnu-gcc"
-		CXX="aarch64-linux-gnu-g++"
-		echo "Building for ARM64 (using aarch64-linux-gnu-gcc)"
+	x86_64|x86|X86)
+		TOOLCHAIN_FILE="${ROOT_DIR}/cmake/toolchain-x86_64.cmake"
 		;;
 	*)
-		echo "Error: Unknown ARCH=${ARCH}. Supported: x86, ARM64"
+		echo "Unsupported ARCH: ${ARCH}"
+		echo "Supported values: arm64|aarch64|ARM64, x86_64|x86|X86"
 		exit 1
 		;;
 esac
 
-case ${1} in
+case "${MODE}" in
+	help|-h|--help)
+		help
+		exit 0
+		;;
 	clean)
-		echo "Clean..."
-		rm -vrf ${BUILD_DIR}
+		rm -rf "${BUILD_DIR}" "${DEPLOY_DIR}"
+		mkdir -p "${BUILD_DIR}" "${DEPLOY_DIR}"
+		echo "Clean done: ${BUILD_DIR} and ${DEPLOY_DIR}"
+		exit 0
 		;;
 	debug)
-		rm -vrf ${BUILD_DIR}
-		cmake -S . -B ${BUILD_DIR} -D CMAKE_C_COMPILER=${CC} -D CMAKE_CXX_COMPILER=${CXX} -D CMAKE_BUILD_TYPE=Debug
-		cmake --build ${BUILD_DIR}
-		cmake --install ${BUILD_DIR} --prefix ${RELEASE_DIR}
+		BUILD_TYPE="Debug"
 		;;
 	*)
-		rm -vrf ${BUILD_DIR}
-		cmake -S . -B ${BUILD_DIR} -D CMAKE_C_COMPILER=${CC} -D CMAKE_CXX_COMPILER=${CXX}
-		cmake --build ${BUILD_DIR}
-		cmake --install ${BUILD_DIR} --prefix ${RELEASE_DIR}
+		BUILD_TYPE="Release"
 		;;
 esac
+
+rm -rf "${BUILD_DIR}" "${DEPLOY_DIR}"
+mkdir -p "${BUILD_DIR}" "${DEPLOY_DIR}"
+
+cmake \
+	-S "${ROOT_DIR}" \
+	-B "${BUILD_DIR}" \
+	-D CMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+	-D CMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_FILE}"
+
+cmake --build "${BUILD_DIR}"
+cmake --install "${BUILD_DIR}" --prefix "${DEPLOY_DIR}"
+
+echo "Build done (${BUILD_TYPE}), artifacts in ${DEPLOY_DIR}"

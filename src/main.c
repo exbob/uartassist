@@ -7,7 +7,7 @@ Free Software Foundation.
 */
 
 #include "args_parser.h"
-#include "mydebug.h"
+#include "log.h"
 #include "uart_assist.h"
 #include "uartdev.h"
 #include <errno.h>

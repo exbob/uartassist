@@ -8,7 +8,7 @@ Free Software Foundation.
 
 #include "args_parser.h"
 #include "Config.h"
-#include "mydebug.h"
+#include "log.h"
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
@@ -95,9 +95,6 @@ void print_usage(const char *program_name)
 {
 	printf("%s version %s\n", PROJECT, VERSION);
 	printf("Build Time: %s\n", BUILD_TIME);
-	if (strlen(GIT_HASH) > 0) {
-		printf("Git Commit: %s, Date: %s\n", GIT_HASH, GIT_DATE);
-	}
 	printf("\n");
 	printf("Usage: %s [OPTIONS]\n", program_name);
 	printf("\n");

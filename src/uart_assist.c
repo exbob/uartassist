@@ -8,7 +8,7 @@ Free Software Foundation.
 
 #include "uart_assist.h"
 #include "json_config.h"
-#include "mydebug.h"
+#include "log.h"
 #include <ctype.h>
 #include <errno.h>
 #include <poll.h>

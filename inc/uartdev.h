@@ -9,7 +9,7 @@ Free Software Foundation.
 #ifndef __UARTDEV_H__
 #define __UARTDEV_H__
 
-#include "mydebug.h"
+#include "log.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>

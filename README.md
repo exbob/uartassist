@@ -19,7 +19,7 @@ uart_assist 是一个用于 Linux 系统的串口测试工具，使用 C 语言�
 ./build.sh
 ```
 
-编译后的可执行文件位于 `./bin/uart_assist`
+编译后的可执行文件位于 `./deploy/uart_assist`
 
 ### 交叉编译
 
@@ -29,8 +29,8 @@ uart_assist 是一个用于 Linux 系统的串口测试工具，使用 C 语言�
 # x86 架构（默认）
 ARCH=x86 ./build.sh
 
-# ARM64 架构
-ARCH=ARM64 ./build.sh
+# ARM64 / AArch64 架构
+ARCH=aarch64 ./build.sh
 ```
 
 ### Debug 模式编译
@@ -65,6 +65,7 @@ uart_assist [OPTIONS]
 - `-c, --config <config>`: 串口参数，格式：数据位校验位停止位（默认: `8N1`）
   - 例如：`8N1`, `7E1`, `8O2`
 - `-h, --help`: 显示帮助信息
+- `-v, --version`: 显示版本信息
 
 ### Loopback 模式选项
 
@@ -78,10 +79,10 @@ uart_assist [OPTIONS]
 
 ```bash
 # ASCII 格式自测
-./bin/uart_assist -m loopback -d /dev/ttyUSB0 -s "Hello"
+./deploy/uart_assist -m loopback -d /dev/ttyUSB0 -s "Hello"
 
 # HEX 格式自测
-./bin/uart_assist -m loopback -d /dev/ttyUSB0 -s "af37126b4A" -f hex
+./deploy/uart_assist -m loopback -d /dev/ttyUSB0 -s "af37126b4A" -f hex
 ```
 
 ### Send 模式选项
@@ -98,13 +99,13 @@ uart_assist [OPTIONS]
 
 ```bash
 # 发送 ASCII 字符串，间隔 500ms，发送 10 次
-./bin/uart_assist -m send -d /dev/ttyUSB0 -s "Hello" -i 500 -n 10
+./deploy/uart_assist -m send -d /dev/ttyUSB0 -s "Hello" -i 500 -n 10
 
 # 发送 HEX 数据，间隔 1000ms，无限发送
-./bin/uart_assist -m send -d /dev/ttyUSB0 -s "af37126b4A" -f hex -i 1000
+./deploy/uart_assist -m send -d /dev/ttyUSB0 -s "af37126b4A" -f hex -i 1000
 
 # 自定义波特率和串口参数
-./bin/uart_assist -m send -d /dev/ttyUSB0 -b 9600 -c 7E1 -s "Test"
+./deploy/uart_assist -m send -d /dev/ttyUSB0 -b 9600 -c 7E1 -s "Test"
 ```
 
 ### Receive 模式选项
@@ -117,10 +118,10 @@ uart_assist [OPTIONS]
 
 ```bash
 # ASCII 格式接收
-./bin/uart_assist -m recv -d /dev/ttyUSB0
+./deploy/uart_assist -m recv -d /dev/ttyUSB0
 
 # HEX 格式接收
-./bin/uart_assist -m recv -d /dev/ttyUSB0 -f hex
+./deploy/uart_assist -m recv -d /dev/ttyUSB0 -f hex
 ```
 
 ### File 模式选项
@@ -165,10 +166,10 @@ uart_assist [OPTIONS]
 
 ```bash
 # 使用 JSON 配置文件发送数据
-./bin/uart_assist -m file -F config.json
+./deploy/uart_assist -m file -F test_config.json
 
 # 自定义串口参数
-./bin/uart_assist -m file -d /dev/ttyUSB0 -b 9600 -c 7E1 -F config.json
+./deploy/uart_assist -m file -d /dev/ttyUSB0 -b 9600 -c 7E1 -F test_config.json
 ```
 
 ## 注意事项

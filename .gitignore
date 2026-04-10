@@ -75,4 +75,4 @@ CMakeUserPresets.json
 #cmake-build-*
 
 build/
-bin/
+deploy/

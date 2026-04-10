@@ -8,7 +8,7 @@ Free Software Foundation.
 
 #include "json_config.h"
 #include "../third_party/cjson/cJSON.h"
-#include "mydebug.h"
+#include "log.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
