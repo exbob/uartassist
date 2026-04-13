@@ -11,6 +11,47 @@ uart_assist 是一个用于 Linux 系统的串口测试工具，使用 C 语言�
 - **接收模式 (recv)**: 持续接收串口数据并显示，支持 ASCII 和 HEX 格式显示
 - **文件模式 (file)**: 通过 JSON 配置文件批量发送数据，支持循环发送和延时控制
 
+## 项目架构
+
+架构图文件：`docs/diagrams/system-architecture.md`
+
+```mermaid
+flowchart TD
+    U[用户 / CLI 参数] --> M["main.c<br/>程序入口 + SIGINT 处理"]
+    M --> P["args_parser.c<br/>parse_args()"]
+    P --> C["uart_config_t<br/>运行配置"]
+
+    C --> D["uartdev.h<br/>uartdev_new() / uartdev_setup()"]
+    D --> K["Linux 串口设备<br/>/dev/tty*"]
+
+    M --> S{mode 分发}
+    C --> S
+
+    S --> L["loopback<br/>uart_loopback_test()"]
+    S --> T["send<br/>uart_send_test()"]
+    S --> R["recv<br/>uart_recv_test()"]
+    S --> F["file<br/>uart_file_test()"]
+
+    L --> H["parse_hex_string()<br/>ASCII/HEX 编解码"]
+    T --> H
+    F --> H
+
+    R --> W["uart_recv_with_timeout()<br/>poll 超时接收"]
+
+    F --> J["json_config.c<br/>parse_json_file() / validate_json_config()"]
+    J --> CJ["third_party/cJSON"]
+    J --> CF["configs/*.json"]
+
+    L --> IO["uartdev_send()/recv()/flush()"]
+    T --> IO
+    R --> IO
+    F --> IO
+    W --> IO
+    IO --> K
+
+    M --> X["资源回收<br/>uartdev_del() + free_config()"]
+```
+
 ## 编译方法
 
 ### 基本编译
