@@ -6,16 +6,17 @@ the terms of the GNU Lesser General Public License version 3 as published by the
 Free Software Foundation.
 */
 
-#include "args_parser.h"
-#include "log.h"
-#include "uart_assist.h"
-#include "uartdev.h"
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include "args_parser.h"
+#include "log.h"
+#include "uart_assist.h"
+#include "uartdev.h"
 
 /* 全局运行标志，用于信号处理 */
 volatile int g_running = 1;
@@ -50,8 +51,8 @@ int main(int argc, char *argv[])
 	}
 
 	/* 创建串口设备 */
-	dev = uartdev_new(config.device, config.baud, config.data_bit, config.parity,
-	                  config.stop_bit);
+	dev = uartdev_new(config.device, config.baud, config.data_bit,
+	                  config.parity, config.stop_bit);
 	if (dev == NULL) {
 		pr_error("Failed to create uart device: %s\n", strerror(errno));
 		free_config(&config);
@@ -66,32 +67,32 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	pr_info("UART device opened: %s, %d, %d%c%d\n", config.device, config.baud, config.data_bit,
-	        config.parity, config.stop_bit);
+	pr_info("UART device opened: %s, %d, %d%c%d\n", config.device, config.baud,
+	        config.data_bit, config.parity, config.stop_bit);
 
 	/* 根据模式执行测试 */
 	switch (config.mode) {
-	case MODE_LOOPBACK:
-		ret = uart_loopback_test(dev, config.send_string, config.format);
-		break;
+		case MODE_LOOPBACK:
+			ret = uart_loopback_test(dev, config.send_string, config.format);
+			break;
 
-	case MODE_SEND:
-		ret = uart_send_test(dev, config.send_string, config.send_interval,
-		                     config.send_count, config.format);
-		break;
+		case MODE_SEND:
+			ret = uart_send_test(dev, config.send_string, config.send_interval,
+			                     config.send_count, config.format);
+			break;
 
-	case MODE_RECV:
-		ret = uart_recv_test(dev, config.format);
-		break;
+		case MODE_RECV:
+			ret = uart_recv_test(dev, config.format);
+			break;
 
-	case MODE_FILE:
-		ret = uart_file_test(dev, config.json_file);
-		break;
+		case MODE_FILE:
+			ret = uart_file_test(dev, config.json_file);
+			break;
 
-	default:
-		pr_error("Unknown mode\n");
-		ret = -1;
-		break;
+		default:
+			pr_error("Unknown mode\n");
+			ret = -1;
+			break;
 	}
 
 	/* 清理资源 */

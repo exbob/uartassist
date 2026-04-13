@@ -7,12 +7,14 @@ Free Software Foundation.
 */
 
 #include "json_config.h"
-#include "../third_party/cjson/cJSON.h"
-#include "log.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "../third_party/cjson/cJSON.h"
+#include "log.h"
 
 json_config_t *parse_json_file(const char *filename)
 {
@@ -133,7 +135,8 @@ json_config_t *parse_json_file(const char *filename)
 	}
 
 	/* 分配发送列表数组 */
-	send_items = (send_item_t *)calloc(config->send_list_count, sizeof(send_item_t));
+	send_items =
+	    (send_item_t *)calloc(config->send_list_count, sizeof(send_item_t));
 	if (send_items == NULL) {
 		pr_error("Failed to allocate memory for send list\n");
 		cJSON_Delete(json);
@@ -233,7 +236,8 @@ int validate_json_config(json_config_t *config)
 	/* 验证每个发送项 */
 	for (i = 0; i < config->send_list_count; i++) {
 		/* 验证 Delay 范围 */
-		if (config->send_list[i].delay < 1 || config->send_list[i].delay > 1000) {
+		if (config->send_list[i].delay < 1 ||
+		    config->send_list[i].delay > 1000) {
 			pr_error("SendList[%d].Delay must be 1-1000, got %d\n", i,
 			         config->send_list[i].delay);
 			return -1;
@@ -252,9 +256,10 @@ int validate_json_config(json_config_t *config)
 		}
 
 		if (len % 2 != 0) {
-			pr_error("SendList[%d].HexData length must be even, "
-			         "got %d\n",
-			         i, len);
+			pr_error(
+			    "SendList[%d].HexData length must be even, "
+			    "got %d\n",
+			    i, len);
 			return -1;
 		}
 	}

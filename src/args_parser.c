@@ -7,14 +7,16 @@ Free Software Foundation.
 */
 
 #include "args_parser.h"
-#include "Config.h"
-#include "log.h"
+
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "Config.h"
+#include "log.h"
 
 #define DEFAULT_DEVICE "/dev/ttyAMA0"
 #define DEFAULT_BAUD 115200
@@ -26,19 +28,21 @@ Free Software Foundation.
 #define DEFAULT_SEND_COUNT 0
 #define DEFAULT_FORMAT OUTPUT_ASCII
 
-static const struct option long_options[] = {{"device", required_argument, 0, 'd'},
-                                             {"baud", required_argument, 0, 'b'},
-                                             {"config", required_argument, 0, 'c'},
-                                             {"mode", required_argument, 0, 'm'},
-                                             {"send", required_argument, 0, 's'},
-                                             {"interval", required_argument, 0, 'i'},
-                                             {"count", required_argument, 0, 'n'},
-                                             {"format", required_argument, 0, 'f'},
-                                             {"file", required_argument, 0, 'F'},
-                                             {"help", no_argument, 0, 'h'},
-                                             {0, 0, 0, 0}};
+static const struct option long_options[] = {
+    {"device", required_argument, 0, 'd'},
+    {"baud", required_argument, 0, 'b'},
+    {"config", required_argument, 0, 'c'},
+    {"mode", required_argument, 0, 'm'},
+    {"send", required_argument, 0, 's'},
+    {"interval", required_argument, 0, 'i'},
+    {"count", required_argument, 0, 'n'},
+    {"format", required_argument, 0, 'f'},
+    {"file", required_argument, 0, 'F'},
+    {"help", no_argument, 0, 'h'},
+    {0, 0, 0, 0}};
 
-int parse_uart_config(const char *str, int *data_bit, char *parity, int *stop_bit)
+int parse_uart_config(const char *str, int *data_bit, char *parity,
+                      int *stop_bit)
 {
 	int len;
 	int d, s;
@@ -99,51 +103,68 @@ void print_usage(const char *program_name)
 	printf("Usage: %s [OPTIONS]\n", program_name);
 	printf("\n");
 	printf("Common Options (all modes):\n");
-	printf("  -m, --mode <mode>          Working mode: "
-	       "loopback/send/recv/file (required)\n");
-	printf("  -d, --device <device>       Serial port device (default: %s)\n", DEFAULT_DEVICE);
-	printf("  -b, --baud <baudrate>      Baud rate (default: %d)\n", DEFAULT_BAUD);
-	printf("  -c, --config <config>      UART config, format: databits "
-	       "parity stopbits (default: %d%c%d)\n",
-	       DEFAULT_DATA_BIT, DEFAULT_PARITY, DEFAULT_STOP_BIT);
+	printf(
+	    "  -m, --mode <mode>          Working mode: "
+	    "loopback/send/recv/file (required)\n");
+	printf("  -d, --device <device>       Serial port device (default: %s)\n",
+	       DEFAULT_DEVICE);
+	printf("  -b, --baud <baudrate>      Baud rate (default: %d)\n",
+	       DEFAULT_BAUD);
+	printf(
+	    "  -c, --config <config>      UART config, format: databits "
+	    "parity stopbits (default: %d%c%d)\n",
+	    DEFAULT_DATA_BIT, DEFAULT_PARITY, DEFAULT_STOP_BIT);
 	printf("                            Examples: 8N1, 7E1, 8O2\n");
 	printf("  -h, --help                 Show this help message\n");
 	printf("\n");
 	printf("Loopback Mode Options:\n");
-	printf("  -s, --send <string>        Send string for loopback test "
-	       "(default: %s)\n",
-	       DEFAULT_SEND_STRING);
-	printf("  -f, --format <format>       Send format: ascii/hex (default: "
-	       "ascii)\n");
-	printf("                            If hex, string is parsed as hex "
-	       "(e.g., af37126b4A = 5 bytes)\n");
+	printf(
+	    "  -s, --send <string>        Send string for loopback test "
+	    "(default: %s)\n",
+	    DEFAULT_SEND_STRING);
+	printf(
+	    "  -f, --format <format>       Send format: ascii/hex (default: "
+	    "ascii)\n");
+	printf(
+	    "                            If hex, string is parsed as hex "
+	    "(e.g., af37126b4A = 5 bytes)\n");
 	printf("\n");
 	printf("Send Mode Options:\n");
-	printf("  -s, --send <string>        Send string (default: %s)\n", DEFAULT_SEND_STRING);
-	printf("  -i, --interval <ms>        Send interval in milliseconds, "
-	       "1-10000 (default: %d)\n",
-	       DEFAULT_SEND_INTERVAL);
-	printf("  -n, --count <count>        Send count, 0 means infinite "
-	       "(default: %d)\n",
-	       DEFAULT_SEND_COUNT);
-	printf("  -f, --format <format>       Send format: ascii/hex (default: "
-	       "ascii)\n");
-	printf("                            If hex, string is parsed as hex "
-	       "(e.g., af37126b4A = 5 bytes)\n");
+	printf("  -s, --send <string>        Send string (default: %s)\n",
+	       DEFAULT_SEND_STRING);
+	printf(
+	    "  -i, --interval <ms>        Send interval in milliseconds, "
+	    "1-10000 (default: %d)\n",
+	    DEFAULT_SEND_INTERVAL);
+	printf(
+	    "  -n, --count <count>        Send count, 0 means infinite "
+	    "(default: %d)\n",
+	    DEFAULT_SEND_COUNT);
+	printf(
+	    "  -f, --format <format>       Send format: ascii/hex (default: "
+	    "ascii)\n");
+	printf(
+	    "                            If hex, string is parsed as hex "
+	    "(e.g., af37126b4A = 5 bytes)\n");
 	printf("\n");
 	printf("Receive Mode Options:\n");
-	printf("  -f, --format <format>      Output format: ascii/hex "
-	       "(default: ascii)\n");
+	printf(
+	    "  -f, --format <format>      Output format: ascii/hex "
+	    "(default: ascii)\n");
 	printf("\n");
 	printf("File Mode Options:\n");
-	printf("  -F, --file <json file>     JSON configuration file "
-	       "(required)\n");
+	printf(
+	    "  -F, --file <json file>     JSON configuration file "
+	    "(required)\n");
 	printf("\n");
 	printf("Examples:\n");
 	printf("  %s -m loopback -d /dev/ttyUSB0 -s \"Hello\"\n", program_name);
-	printf("  %s -m loopback -d /dev/ttyUSB0 -s \"af37126b4A\" -f hex\n", program_name);
-	printf("  %s -m send -d /dev/ttyUSB0 -s \"Hello\" -i 500 -n 10\n", program_name);
-	printf("  %s -m send -d /dev/ttyUSB0 -s \"af37126b4A\" -f hex -i 1000\n", program_name);
+	printf("  %s -m loopback -d /dev/ttyUSB0 -s \"af37126b4A\" -f hex\n",
+	       program_name);
+	printf("  %s -m send -d /dev/ttyUSB0 -s \"Hello\" -i 500 -n 10\n",
+	       program_name);
+	printf("  %s -m send -d /dev/ttyUSB0 -s \"af37126b4A\" -f hex -i 1000\n",
+	       program_name);
 	printf("  %s -m recv -d /dev/ttyUSB0 -f hex\n", program_name);
 }
 
@@ -178,107 +199,114 @@ int parse_args(int argc, char *argv[], uart_config_t *config)
 	while ((opt = getopt_long(argc, argv, "d:b:c:m:s:i:n:f:F:h", long_options,
 	                          &option_index)) != -1) {
 		switch (opt) {
-		case 'd':
-			config->device = strdup(optarg);
-			if (config->device == NULL) {
-				pr_error("Failed to allocate memory for device "
-				         "name\n");
+			case 'd':
+				config->device = strdup(optarg);
+				if (config->device == NULL) {
+					pr_error(
+					    "Failed to allocate memory for device "
+					    "name\n");
+					return -1;
+				}
+				break;
+
+			case 'b':
+				config->baud = (int)strtol(optarg, &endptr, 10);
+				if (*endptr != '\0' || config->baud <= 0) {
+					pr_error("Invalid baud rate: %s\n", optarg);
+					return -1;
+				}
+				break;
+
+			case 'c':
+				if (parse_uart_config(optarg, &data_bit, &parity, &stop_bit) <
+				    0) {
+					return -1;
+				}
+				config->data_bit = data_bit;
+				config->parity = parity;
+				config->stop_bit = stop_bit;
+				break;
+
+			case 'm':
+				if (strcmp(optarg, "loopback") == 0) {
+					config->mode = MODE_LOOPBACK;
+				} else if (strcmp(optarg, "send") == 0) {
+					config->mode = MODE_SEND;
+				} else if (strcmp(optarg, "recv") == 0) {
+					config->mode = MODE_RECV;
+				} else if (strcmp(optarg, "file") == 0) {
+					config->mode = MODE_FILE;
+				} else {
+					pr_error(
+					    "Invalid mode: %s (should be "
+					    "loopback/send/recv/file)\n",
+					    optarg);
+					return -1;
+				}
+				mode_set = 1;
+				break;
+
+			case 's':
+				config->send_string = strdup(optarg);
+				if (config->send_string == NULL) {
+					pr_error(
+					    "Failed to allocate memory for send "
+					    "string\n");
+					return -1;
+				}
+				break;
+
+			case 'i':
+				config->send_interval = (int)strtol(optarg, &endptr, 10);
+				if (*endptr != '\0' || config->send_interval < 1 ||
+				    config->send_interval > 10000) {
+					pr_error(
+					    "Invalid interval: %s (should be "
+					    "1-10000)\n",
+					    optarg);
+					return -1;
+				}
+				break;
+
+			case 'n':
+				config->send_count = (int)strtol(optarg, &endptr, 10);
+				if (*endptr != '\0' || config->send_count < 0) {
+					pr_error("Invalid count: %s (should be >= 0)\n", optarg);
+					return -1;
+				}
+				break;
+
+			case 'f':
+				if (strcmp(optarg, "ascii") == 0) {
+					config->format = OUTPUT_ASCII;
+				} else if (strcmp(optarg, "hex") == 0) {
+					config->format = OUTPUT_HEX;
+				} else {
+					pr_error(
+					    "Invalid format: %s (should be "
+					    "ascii/hex)\n",
+					    optarg);
+					return -1;
+				}
+				break;
+
+			case 'F':
+				config->json_file = strdup(optarg);
+				if (config->json_file == NULL) {
+					pr_error(
+					    "Failed to allocate memory for JSON "
+					    "file name\n");
+					return -1;
+				}
+				break;
+
+			case 'h':
+				print_usage(argv[0]);
+				return 1; /* 特殊返回值，表示显示帮助后退出 */
+
+			default:
+				print_usage(argv[0]);
 				return -1;
-			}
-			break;
-
-		case 'b':
-			config->baud = (int)strtol(optarg, &endptr, 10);
-			if (*endptr != '\0' || config->baud <= 0) {
-				pr_error("Invalid baud rate: %s\n", optarg);
-				return -1;
-			}
-			break;
-
-		case 'c':
-			if (parse_uart_config(optarg, &data_bit, &parity, &stop_bit) < 0) {
-				return -1;
-			}
-			config->data_bit = data_bit;
-			config->parity = parity;
-			config->stop_bit = stop_bit;
-			break;
-
-		case 'm':
-			if (strcmp(optarg, "loopback") == 0) {
-				config->mode = MODE_LOOPBACK;
-			} else if (strcmp(optarg, "send") == 0) {
-				config->mode = MODE_SEND;
-			} else if (strcmp(optarg, "recv") == 0) {
-				config->mode = MODE_RECV;
-			} else if (strcmp(optarg, "file") == 0) {
-				config->mode = MODE_FILE;
-			} else {
-				pr_error("Invalid mode: %s (should be "
-				         "loopback/send/recv/file)\n",
-				         optarg);
-				return -1;
-			}
-			mode_set = 1;
-			break;
-
-		case 's':
-			config->send_string = strdup(optarg);
-			if (config->send_string == NULL) {
-				pr_error("Failed to allocate memory for send "
-				         "string\n");
-				return -1;
-			}
-			break;
-
-		case 'i':
-			config->send_interval = (int)strtol(optarg, &endptr, 10);
-			if (*endptr != '\0' || config->send_interval < 1 ||
-			    config->send_interval > 10000) {
-				pr_error("Invalid interval: %s (should be "
-				         "1-10000)\n",
-				         optarg);
-				return -1;
-			}
-			break;
-
-		case 'n':
-			config->send_count = (int)strtol(optarg, &endptr, 10);
-			if (*endptr != '\0' || config->send_count < 0) {
-				pr_error("Invalid count: %s (should be >= 0)\n", optarg);
-				return -1;
-			}
-			break;
-
-		case 'f':
-			if (strcmp(optarg, "ascii") == 0) {
-				config->format = OUTPUT_ASCII;
-			} else if (strcmp(optarg, "hex") == 0) {
-				config->format = OUTPUT_HEX;
-			} else {
-				pr_error("Invalid format: %s (should be "
-				         "ascii/hex)\n",
-				         optarg);
-				return -1;
-			}
-			break;
-
-		case 'F':
-			config->json_file = strdup(optarg);
-			if (config->json_file == NULL) {
-				pr_error("Failed to allocate memory for JSON "
-				         "file name\n");
-				return -1;
-			}
-			break;
-
-		case 'h':
-			print_usage(argv[0]);
-			return 1; /* 特殊返回值，表示显示帮助后退出 */
-
-		default:
-			print_usage(argv[0]);
-			return -1;
 		}
 	}
 

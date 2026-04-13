@@ -7,8 +7,7 @@ Free Software Foundation.
 */
 
 #include "uart_assist.h"
-#include "json_config.h"
-#include "log.h"
+
 #include <ctype.h>
 #include <errno.h>
 #include <poll.h>
@@ -17,6 +16,9 @@ Free Software Foundation.
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
+
+#include "json_config.h"
+#include "log.h"
 
 extern volatile int g_running; /* 全局运行标志，由信号处理设置 */
 
@@ -39,8 +41,7 @@ int parse_hex_string(const char *hex_str, char *buf, int buf_len)
 	}
 
 	if (len / 2 > buf_len) {
-		pr_error("Hex string too long: %d bytes (max: %d)\n", len / 2,
-		         buf_len);
+		pr_error("Hex string too long: %d bytes (max: %d)\n", len / 2, buf_len);
 		return -1;
 	}
 
@@ -53,13 +54,11 @@ int parse_hex_string(const char *hex_str, char *buf, int buf_len)
 		c2 = tolower(c2);
 
 		if (!((c1 >= '0' && c1 <= '9') || (c1 >= 'a' && c1 <= 'f'))) {
-			pr_error("Invalid hex character at position %d: %c\n",
-			         i, c1);
+			pr_error("Invalid hex character at position %d: %c\n", i, c1);
 			return -1;
 		}
 		if (!((c2 >= '0' && c2 <= '9') || (c2 >= 'a' && c2 <= 'f'))) {
-			pr_error("Invalid hex character at position %d: %c\n",
-			         i + 1, c2);
+			pr_error("Invalid hex character at position %d: %c\n", i + 1, c2);
 			return -1;
 		}
 
@@ -105,21 +104,21 @@ void print_ascii(const char *buf, int len)
 		} else {
 			/* 控制字符，显示为转义序列 */
 			switch (buf[i]) {
-			case '\n':
-				printf("\\n");
-				break;
-			case '\r':
-				printf("\\r");
-				break;
-			case '\t':
-				printf("\\t");
-				break;
-			case '\0':
-				printf("\\0");
-				break;
-			default:
-				printf("\\x%02X", (unsigned char)buf[i]);
-				break;
+				case '\n':
+					printf("\\n");
+					break;
+				case '\r':
+					printf("\\r");
+					break;
+				case '\t':
+					printf("\\t");
+					break;
+				case '\0':
+					printf("\\0");
+					break;
+				default:
+					printf("\\x%02X", (unsigned char)buf[i]);
+					break;
 			}
 		}
 	}
@@ -172,8 +171,7 @@ int uart_recv_with_timeout(uartdev_t *dev, char *buf, int len, int timeout_sec)
 	if (pfd.revents & POLLIN) {
 		nread = uartdev_recv(dev, buf, len);
 		if (nread < 0) {
-			pr_error("uartdev_recv() failed: %s\n",
-			         strerror(errno));
+			pr_error("uartdev_recv() failed: %s\n", strerror(errno));
 			return -1;
 		}
 	}
@@ -198,14 +196,13 @@ int uart_loopback_test(uartdev_t *dev, const char *send_str,
 
 	if (format == OUTPUT_HEX) {
 		/* 解析hex字符串 */
-		send_data_len =
-		    parse_hex_string(send_str, send_buf, sizeof(send_buf));
+		send_data_len = parse_hex_string(send_str, send_buf, sizeof(send_buf));
 		if (send_data_len < 0) {
 			return -1;
 		}
 		send_data = send_buf;
-		pr_info("Loopback test: sending hex \"%s\" (%d bytes)\n",
-		        send_str, send_data_len);
+		pr_info("Loopback test: sending hex \"%s\" (%d bytes)\n", send_str,
+		        send_data_len);
 	} else {
 		/* ASCII格式 */
 		send_data_len = strlen(send_str);
@@ -237,8 +234,7 @@ int uart_loopback_test(uartdev_t *dev, const char *send_str,
 		pr_error("Failed to receive data: %s\n", strerror(errno));
 		return -1;
 	} else if (recv_len == 0) {
-		pr_error("Receive timeout after %d seconds\n",
-		         RECV_TIMEOUT_SEC);
+		pr_error("Receive timeout after %d seconds\n", RECV_TIMEOUT_SEC);
 		return -1;
 	}
 
@@ -247,9 +243,8 @@ int uart_loopback_test(uartdev_t *dev, const char *send_str,
 
 	/* 比较发送和接收的数据 */
 	if (recv_len != send_data_len) {
-		pr_error(
-		    "Data length mismatch: sent %d bytes, received %d bytes\n",
-		    send_data_len, recv_len);
+		pr_error("Data length mismatch: sent %d bytes, received %d bytes\n",
+		         send_data_len, recv_len);
 		if (format == OUTPUT_HEX) {
 			pr_info("Sent (hex): \"%s\"\n", send_str);
 		} else {
@@ -291,20 +286,21 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 
 	if (format == OUTPUT_HEX) {
 		/* 解析hex字符串 */
-		send_data_len =
-		    parse_hex_string(send_str, send_buf, sizeof(send_buf));
+		send_data_len = parse_hex_string(send_str, send_buf, sizeof(send_buf));
 		if (send_data_len < 0) {
 			return -1;
 		}
 		send_data = send_buf;
 		if (count == 0) {
-			pr_info("Send test: hex=\"%s\" (%d bytes), interval=%d "
-			        "ms, count=infinite\n",
-			        send_str, send_data_len, interval_ms);
+			pr_info(
+			    "Send test: hex=\"%s\" (%d bytes), interval=%d "
+			    "ms, count=infinite\n",
+			    send_str, send_data_len, interval_ms);
 		} else {
-			pr_info("Send test: hex=\"%s\" (%d bytes), interval=%d "
-			        "ms, count=%d\n",
-			        send_str, send_data_len, interval_ms, count);
+			pr_info(
+			    "Send test: hex=\"%s\" (%d bytes), interval=%d "
+			    "ms, count=%d\n",
+			    send_str, send_data_len, interval_ms, count);
 		}
 	} else {
 		/* ASCII格式 */
@@ -315,13 +311,15 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 		}
 		send_data = send_str;
 		if (count == 0) {
-			pr_info("Send test: string=\"%s\" (%d bytes), "
-			        "interval=%d ms, count=infinite\n",
-			        send_str, send_data_len, interval_ms);
+			pr_info(
+			    "Send test: string=\"%s\" (%d bytes), "
+			    "interval=%d ms, count=infinite\n",
+			    send_str, send_data_len, interval_ms);
 		} else {
-			pr_info("Send test: string=\"%s\" (%d bytes), "
-			        "interval=%d ms, count=%d\n",
-			        send_str, send_data_len, interval_ms, count);
+			pr_info(
+			    "Send test: string=\"%s\" (%d bytes), "
+			    "interval=%d ms, count=%d\n",
+			    send_str, send_data_len, interval_ms, count);
 		}
 	}
 
@@ -330,8 +328,7 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 
 	while (g_running) {
 		/* 发送数据 */
-		if (uartdev_send(dev, send_data, send_data_len) !=
-		    send_data_len) {
+		if (uartdev_send(dev, send_data, send_data_len) != send_data_len) {
 			pr_error("Failed to send data: %s\n", strerror(errno));
 			return -1;
 		}
@@ -340,13 +337,13 @@ int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
 		i++;
 
 		if (format == OUTPUT_HEX) {
-			printf("Send [%d] : hex=\"%s\" (%d bytes, total: %d "
-			       "bytes)\n",
-			       i, send_str, send_data_len, sent_bytes);
-		} else {
 			printf(
-			    "Send [%d] : \"%s\" (%d bytes, total: %d bytes)\n",
+			    "Send [%d] : hex=\"%s\" (%d bytes, total: %d "
+			    "bytes)\n",
 			    i, send_str, send_data_len, sent_bytes);
+		} else {
+			printf("Send [%d] : \"%s\" (%d bytes, total: %d bytes)\n", i,
+			       send_str, send_data_len, sent_bytes);
 		}
 
 		/* 检查发送次数 */
@@ -383,11 +380,10 @@ int uart_recv_test(uartdev_t *dev, output_format_t format)
 
 	while (g_running) {
 		/* 接收数据（带超时） */
-		recv_len = uart_recv_with_timeout(
-		    dev, recv_buf, sizeof(recv_buf) - 1, RECV_TIMEOUT_SEC);
+		recv_len = uart_recv_with_timeout(dev, recv_buf, sizeof(recv_buf) - 1,
+		                                  RECV_TIMEOUT_SEC);
 		if (recv_len < 0) {
-			pr_error("Failed to receive data: %s\n",
-			         strerror(errno));
+			pr_error("Failed to receive data: %s\n", strerror(errno));
 			return -1;
 		} else if (recv_len == 0) {
 			/* 超时或被信号中断，检查是否需要退出 */
@@ -396,9 +392,10 @@ int uart_recv_test(uartdev_t *dev, output_format_t format)
 				break;
 			}
 			/* 超时，继续等待 */
-			pr_info("Receive timeout (%d seconds), waiting for "
-			        "data...\n",
-			        RECV_TIMEOUT_SEC);
+			pr_info(
+			    "Receive timeout (%d seconds), waiting for "
+			    "data...\n",
+			    RECV_TIMEOUT_SEC);
 			continue;
 		}
 
@@ -410,12 +407,11 @@ int uart_recv_test(uartdev_t *dev, output_format_t format)
 			/* 为ASCII格式，先打印数据，然后显示统计信息 */
 			printf("Recv [%d] : \"", packet_count);
 			print_ascii(recv_buf, recv_len);
-			printf("\" (%d bytes, total: %d bytes)\n", recv_len,
-			       total_bytes);
+			printf("\" (%d bytes, total: %d bytes)\n", recv_len, total_bytes);
 		} else {
 			/* HEX格式，先显示统计信息，然后打印hex数据 */
-			printf("Recv [%d] : (%d bytes, total: %d bytes)\n",
-			       packet_count, recv_len, total_bytes);
+			printf("Recv [%d] : (%d bytes, total: %d bytes)\n", packet_count,
+			       recv_len, total_bytes);
 			print_hex(recv_buf, recv_len);
 		}
 	}
@@ -471,20 +467,17 @@ int uart_file_test(uartdev_t *dev, const char *json_file)
 			}
 
 			/* 解析HEX数据 */
-			send_len =
-			    parse_hex_string(config->send_list[i].hex_data,
-			                     send_buf, sizeof(send_buf));
+			send_len = parse_hex_string(config->send_list[i].hex_data, send_buf,
+			                            sizeof(send_buf));
 			if (send_len < 0) {
-				pr_error(
-				    "Failed to parse HexData for item %d\n",
-				    config->send_list[i].number);
+				pr_error("Failed to parse HexData for item %d\n",
+				         config->send_list[i].number);
 				continue;
 			}
 
 			/* 发送数据 */
 			if (uartdev_send(dev, send_buf, send_len) != send_len) {
-				pr_error("Failed to send data: %s\n",
-				         strerror(errno));
+				pr_error("Failed to send data: %s\n", strerror(errno));
 				continue;
 			}
 
@@ -492,11 +485,11 @@ int uart_file_test(uartdev_t *dev, const char *json_file)
 			sent_count++;
 
 			/* 打印发送信息 */
-			printf("Send [%d] : hex=\"%s\" (%d bytes, total: %d "
-			       "bytes)\n",
-			       config->send_list[i].number,
-			       config->send_list[i].hex_data, send_len,
-			       total_bytes);
+			printf(
+			    "Send [%d] : hex=\"%s\" (%d bytes, total: %d "
+			    "bytes)\n",
+			    config->send_list[i].number, config->send_list[i].hex_data,
+			    send_len, total_bytes);
 
 			/* 延时 */
 			if (config->send_list[i].delay > 0) {

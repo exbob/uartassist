@@ -6,8 +6,8 @@ the terms of the GNU Lesser General Public License version 3 as published by the
 Free Software Foundation.
 */
 
-#ifndef __ARGS_PARSER_H__
-#define __ARGS_PARSER_H__
+#ifndef _ARGS_PARSER_H
+#define _ARGS_PARSER_H
 
 #include <stdint.h>
 
@@ -53,7 +53,8 @@ int parse_args(int argc, char *argv[], uart_config_t *config);
  *       stop_bit - 输出停止位
  * 返回: 0 成功, -1 失败
  */
-int parse_uart_config(const char *str, int *data_bit, char *parity, int *stop_bit);
+int parse_uart_config(const char *str, int *data_bit, char *parity,
+                      int *stop_bit);
 
 /*
  * 打印使用说明
@@ -65,4 +66,4 @@ void print_usage(const char *program_name);
  */
 void free_config(uart_config_t *config);
 
-#endif /* __ARGS_PARSER_H__ */
+#endif /* _ARGS_PARSER_H */

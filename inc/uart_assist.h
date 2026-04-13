@@ -6,8 +6,8 @@ the terms of the GNU Lesser General Public License version 3 as published by the
 Free Software Foundation.
 */
 
-#ifndef __UART_ASSIST_H__
-#define __UART_ASSIST_H__
+#ifndef _UART_ASSIST_H
+#define _UART_ASSIST_H
 
 #include "args_parser.h"
 #include "uartdev.h"
@@ -30,7 +30,8 @@ int parse_hex_string(const char *hex_str, char *buf, int buf_len);
  *       format - 发送格式（ASCII/HEX）
  * 返回: 0 成功, -1 失败
  */
-int uart_loopback_test(uartdev_t *dev, const char *send_str, output_format_t format);
+int uart_loopback_test(uartdev_t *dev, const char *send_str,
+                       output_format_t format);
 
 /*
  * 发送模式：按间隔和次数发送数据
@@ -41,8 +42,8 @@ int uart_loopback_test(uartdev_t *dev, const char *send_str, output_format_t for
  *       format - 发送格式（ASCII/HEX）
  * 返回: 0 成功, -1 失败
  */
-int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms, int count,
-                   output_format_t format);
+int uart_send_test(uartdev_t *dev, const char *send_str, int interval_ms,
+                   int count, output_format_t format);
 
 /*
  * 接收模式：持续接收并打印数据
@@ -85,4 +86,4 @@ void print_ascii(const char *buf, int len);
  */
 void print_hex(const char *buf, int len);
 
-#endif /* __UART_ASSIST_H__ */
+#endif /* _UART_ASSIST_H */

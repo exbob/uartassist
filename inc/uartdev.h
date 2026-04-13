@@ -6,10 +6,9 @@ the terms of the GNU Lesser General Public License version 3 as published by the
 Free Software Foundation.
 */
 
-#ifndef __UARTDEV_H__
-#define __UARTDEV_H__
+#ifndef _UARTDEV_H
+#define _UARTDEV_H
 
-#include "log.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
@@ -19,6 +18,8 @@ Free Software Foundation.
 #include <sys/file.h>
 #include <termios.h>
 #include <unistd.h>
+
+#include "log.h"
 
 #define UARTDEV_INVALID_FD -1
 
@@ -42,66 +43,66 @@ typedef struct _uartdev_t {
 static inline int _get_baud(int baud)
 {
 	switch (baud) {
-	case 1200:
-		return B1200;
-	case 2400:
-		return B2400;
-	case 4800:
-		return B4800;
-	case 9600:
-		return B9600;
-	case 19200:
-		return B19200;
-	case 38400:
-		return B38400;
-	case 57600:
-		return B57600;
-	case 115200:
-		return B115200;
-	case 230400:
-		return B230400;
-	case 460800:
-		return B460800;
-	case 500000:
-		return B500000;
-	case 576000:
-		return B576000;
-	case 921600:
-		return B921600;
+		case 1200:
+			return B1200;
+		case 2400:
+			return B2400;
+		case 4800:
+			return B4800;
+		case 9600:
+			return B9600;
+		case 19200:
+			return B19200;
+		case 38400:
+			return B38400;
+		case 57600:
+			return B57600;
+		case 115200:
+			return B115200;
+		case 230400:
+			return B230400;
+		case 460800:
+			return B460800;
+		case 500000:
+			return B500000;
+		case 576000:
+			return B576000;
+		case 921600:
+			return B921600;
 #ifdef B1000000
-	case 1000000:
-		return B1000000;
+		case 1000000:
+			return B1000000;
 #endif
 #ifdef B1152000
-	case 1152000:
-		return B1152000;
+		case 1152000:
+			return B1152000;
 #endif
 #ifdef B1500000
-	case 1500000:
-		return B1500000;
+		case 1500000:
+			return B1500000;
 #endif
 #ifdef B2000000
-	case 2000000:
-		return B2000000;
+		case 2000000:
+			return B2000000;
 #endif
 #ifdef B2500000
-	case 2500000:
-		return B2500000;
+		case 2500000:
+			return B2500000;
 #endif
 #ifdef B3000000
-	case 3000000:
-		return B3000000;
+		case 3000000:
+			return B3000000;
 #endif
 #ifdef B3500000
-	case 3500000:
-		return B3500000;
+		case 3500000:
+			return B3500000;
 #endif
 #ifdef B4000000
-	case 4000000:
-		return B4000000;
+		case 4000000:
+			return B4000000;
 #endif
-	default:
-		return -1;
+		default:
+			return -1;
 	}
 }
 
@@ -127,8 +128,8 @@ arguments : const char *port , UART device file name ,"/dev/ttyS1",
           int data_bit , data bit , 5, 6, 7, 8
           int stop_bit , stop bit , 1 or 2
 */
-static inline uartdev_t *uartdev_new(const char *port, int baud, int data_bit, char parity,
-                                     int stop_bit)
+static inline uartdev_t *uartdev_new(const char *port, int baud, int data_bit,
+                                     char parity, int stop_bit)
 {
 	pr_debug("%s, %d, %d%c%d\n", port, baud, data_bit, parity, stop_bit);
 
@@ -167,51 +168,51 @@ static inline uartdev_t *uartdev_new(const char *port, int baud, int data_bit, c
 
 	/* Data bit */
 	switch (data_bit) {
-	case 5:
-	case 6:
-	case 7:
-	case 8:
-		dev->data_bit = data_bit;
-		break;
-	default:
-		_uartdev_free(dev);
-		errno = EINVAL;
-		return NULL;
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+			dev->data_bit = data_bit;
+			break;
+		default:
+			_uartdev_free(dev);
+			errno = EINVAL;
+			return NULL;
 	}
 
 	/* Stop bit */
 	switch (stop_bit) {
-	case 1:
-	case 2:
-		dev->stop_bit = stop_bit;
-		break;
-	default:
-		_uartdev_free(dev);
-		errno = EINVAL;
-		return NULL;
+		case 1:
+		case 2:
+			dev->stop_bit = stop_bit;
+			break;
+		default:
+			_uartdev_free(dev);
+			errno = EINVAL;
+			return NULL;
 	}
 
 	/* Parity */
 	switch (parity) {
-	case 'N':
-	case 'E':
-	case 'O':
-	case 'n':
-	case 'e':
-	case 'o':
-		dev->parity = parity;
-		break;
-	default:
-		_uartdev_free(dev);
-		errno = EINVAL;
-		return NULL;
+		case 'N':
+		case 'E':
+		case 'O':
+		case 'n':
+		case 'e':
+		case 'o':
+			dev->parity = parity;
+			break;
+		default:
+			_uartdev_free(dev);
+			errno = EINVAL;
+			return NULL;
 	}
 
 	/* fd init */
 	dev->fd = UARTDEV_INVALID_FD;
 
-	pr_debug("new uartdev_t, %s, %d, %d%c%d\n", dev->port, dev->baud, dev->data_bit,
-	         dev->parity, dev->stop_bit);
+	pr_debug("new uartdev_t, %s, %d, %d%c%d\n", dev->port, dev->baud,
+	         dev->data_bit, dev->parity, dev->stop_bit);
 
 	return dev;
 }
@@ -311,57 +312,57 @@ static inline int uartdev_setup(uartdev_t *dev)
 	newtio.c_cflag &= ~CSIZE;
 
 	switch (dev->data_bit) {
-	case 5:
-		newtio.c_cflag |= CS5;
-		break;
-	case 6:
-		newtio.c_cflag |= CS6;
-		break;
-	case 7:
-		newtio.c_cflag |= CS7;
-		break;
-	case 8:
-		newtio.c_cflag |= CS8;
-		break;
+		case 5:
+			newtio.c_cflag |= CS5;
+			break;
+		case 6:
+			newtio.c_cflag |= CS6;
+			break;
+		case 7:
+			newtio.c_cflag |= CS7;
+			break;
+		case 8:
+			newtio.c_cflag |= CS8;
+			break;
 
-	default:
-		errno = EINVAL;
-		return -EINVAL;
+		default:
+			errno = EINVAL;
+			return -EINVAL;
 	}
 
 	switch (dev->stop_bit) {
-	case 1:
-		newtio.c_cflag &= ~CSTOPB;
-		break;
-	case 2:
-		newtio.c_cflag |= CSTOPB;
-		break;
+		case 1:
+			newtio.c_cflag &= ~CSTOPB;
+			break;
+		case 2:
+			newtio.c_cflag |= CSTOPB;
+			break;
 
-	default:
-		errno = EINVAL;
-		return -EINVAL;
+		default:
+			errno = EINVAL;
+			return -EINVAL;
 	}
 
 	switch (dev->parity) {
-	case 'N':
-	case 'n':
-		newtio.c_cflag &= ~PARENB;
-		newtio.c_cflag &= ~PARODD;
-		break;
-	case 'E':
-	case 'e':
-		newtio.c_cflag |= PARENB;
-		newtio.c_cflag &= ~PARODD;
-		break;
-	case 'O':
-	case 'o':
-		newtio.c_cflag |= PARENB;
-		newtio.c_cflag |= PARODD;
-		break;
+		case 'N':
+		case 'n':
+			newtio.c_cflag &= ~PARENB;
+			newtio.c_cflag &= ~PARODD;
+			break;
+		case 'E':
+		case 'e':
+			newtio.c_cflag |= PARENB;
+			newtio.c_cflag &= ~PARODD;
+			break;
+		case 'O':
+		case 'o':
+			newtio.c_cflag |= PARENB;
+			newtio.c_cflag |= PARODD;
+			break;
 
-	default:
-		errno = EINVAL;
-		return -EINVAL;
+		default:
+			errno = EINVAL;
+			return -EINVAL;
 	}
 
 	/* C_LFLAG      Line options

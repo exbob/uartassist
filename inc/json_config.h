@@ -6,8 +6,8 @@ the terms of the GNU Lesser General Public License version 3 as published by the
 Free Software Foundation.
 */
 
-#ifndef __JSON_CONFIG_H__
-#define __JSON_CONFIG_H__
+#ifndef _JSON_CONFIG_H
+#define _JSON_CONFIG_H
 
 typedef struct {
 	int number;     /* 标签号 */
@@ -43,4 +43,4 @@ int validate_json_config(json_config_t *config);
  */
 void free_json_config(json_config_t *config);
 
-#endif /* __JSON_CONFIG_H__ */
+#endif /* _JSON_CONFIG_H */
